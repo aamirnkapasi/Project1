@@ -6,3 +6,4 @@ def opencsv(filename):
     
 text = opencsv("penguins.csv")
 print(text)
+print(text)
