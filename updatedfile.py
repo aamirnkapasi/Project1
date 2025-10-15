@@ -60,6 +60,7 @@ def avg_body_mass_year():
         else:
             avg_body_mass_year[year] = None
     return avg_body_mass_year
+    
 
 print(avg_body_mass_year())
 
