@@ -1,10 +1,13 @@
 #Names: Aamir Kapasi and Lucille Sanders
 #emails: akapasi@umich.edu and lucysand@umich.edu
 #UMIDs: 75001048 and 84724442
-#collaborators: 
-#functions created by each student:
-#Aamir:
-#Lucy:
+#collaborators: COPilot
+    #worked with to debug code and helped write some of our 
+    #functions like generate_report for formatting and writing. Also helped write 
+    #our test cases which we then edited to match the data incosistencies it couldn't forsee.
+#functions created by each student: 
+#Aamir: Load_penguins, year_body_mass_dict
+#Lucy: avg_body_mass_island, avg_body_mass_year, generate_report
 
 def load_penguins(filename):
     with open(filename, "r") as f:
@@ -82,7 +85,7 @@ def generate_report(avg_body_mass_island, avg_body_mass_year):
 
 def main():
     generate_report(avg_body_mass_island, avg_body_mass_year)
-#[year][penguin] = [body_mass_g, island]
+
 main()
 
 import unittest
