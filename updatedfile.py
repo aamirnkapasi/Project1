@@ -96,6 +96,87 @@ class TestLoadPenguins(unittest.TestCase):
         with self.assertRaises(KeyError):
             load_penguins("penguins.csv")['"4"'] == data["'4'"]
 
+class TestYearBodyMassDict(unittest.TestCase):
+    def test_known_year_island(self):
+        result = year_body_mass_dict()
+        self.assertIn('"Torgersen"', result[2007])
+        self.assertEqual(result[2007]['"Torgersen"'][0], 3750)
+    def test_year_contains_islands(self):
+        result = year_body_mass_dict()
+        self.assertIn('"Biscoe"', result[2008])
+        self.assertIn('"Dream"', result[2008])
+    def test_year_not_in_data(self):
+        with self.assertRaises(KeyError):
+            year_body_mass_dict()[9999]
+    def test_empty_data(self):
+        def mock_load_penguins(filename):
+            return {}
+        original = load_penguins
+        try:
+            globals()['load_penguins'] = mock_load_penguins
+            self.assertEqual(year_body_mass_dict(), {})
+        finally:
+            globals()['load_penguins'] = original
+
+class TestAvgBodyMassIsland(unittest.TestCase):
+    def test_known_year_island_average(self):
+        result = avg_body_mass_island()
+        self.assertAlmostEqual(result[2007]['"Torgersen"'], 3763.16, places=2)
+    def test_all_islands_have_averages(self):
+        result = avg_body_mass_island()
+        for island in result[2008]:
+            self.assertIsInstance(result[2008][island], float)
+    def test_year_not_in_data(self):
+        result = avg_body_mass_island()
+        with self.assertRaises(KeyError):
+            _ = result[9999]
+    def test_empty_data(self):
+        def mock_year_body_mass_dict():
+            return {}
+        original = year_body_mass_dict
+        try:
+            globals()['year_body_mass_dict'] = mock_year_body_mass_dict
+            self.assertEqual(avg_body_mass_island(), {})
+        finally:
+            globals()['year_body_mass_dict'] = original
+
+class TestAvgBodyMassYear(unittest.TestCase):
+    def test_known_year_average(self):
+        result = avg_body_mass_year()
+        self.assertAlmostEqual(result[2007], 4124.54, places=2)
+    def test_all_years_have_averages(self):
+        result = avg_body_mass_year()
+        for year in result:
+            self.assertIsInstance(result[year], float)
+    def test_year_not_in_data(self):
+        result = avg_body_mass_year()
+        with self.assertRaises(KeyError):
+            _ = result[9999]
+    def test_empty_data(self):
+        def mock_year_body_mass_dict():
+            return {}
+        original = year_body_mass_dict
+        try:
+            globals()['year_body_mass_dict'] = mock_year_body_mass_dict
+            self.assertEqual(avg_body_mass_year(), {})
+        finally:
+            globals()['year_body_mass_dict'] = original
+
+class TestGenerateReport(unittest.TestCase):
+    def test_report_file_created(self):
+        import os
+        if os.path.exists("penguin_report.txt"):
+            os.remove("penguin_report.txt")
+        generate_report(avg_body_mass_island, avg_body_mass_year)
+        self.assertTrue(os.path.exists("penguin_report.txt"))
+    def test_report_content(self):
+        generate_report(avg_body_mass_island, avg_body_mass_year)
+        with open("penguin_report.txt", "r") as f:
+            content = f.read()
+        self.assertIn("Penguin Body Mass Report", content)
+        self.assertIn("Year: 2007", content)
+        self.assertIn("Island: \"Torgersen\"", content)
+
 unittest.main()
 if __name__ == "__main__":
     
